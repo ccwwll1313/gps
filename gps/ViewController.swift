@@ -22,9 +22,12 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
     var selectedsite = [String]()
     var selecteddistance = [Double]()
     var selectedangle = [Double]()
-    var sitegps : [String:[Double]] = sitegps1
-    var currlocation = CLLocation()
     var bool:Bool = true
+    var sitegps = [String:[Double]]()
+    func getsitegps(){
+    if bool {sitegps = sitegps1}
+    else{sitegps = sitegps2}}
+    var currlocation = CLLocation()
     func modeswitch(){
         bool = !bool
     }
@@ -64,6 +67,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         selecteddistance.removeAll()
          var i = 0
         //将预置的经纬度和取出的参数进行对比，将符合条件的地点存在数组中
+        getsitegps()
         for (site,gps) in sitegps{
             let tolocation = CLLocation(latitude: gps[1], longitude: gps[0])
             var distance:Double = 0
@@ -93,7 +97,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         self.locationManager.distanceFilter = 10
         if #available(iOS 8.0, *){
-           self.locationManager.requestWhenInUseAuthorization()
+        self.locationManager.requestWhenInUseAuthorization()
         }
         self.locationManager.delegate = self
         if CLLocationManager.locationServicesEnabled(){
@@ -103,9 +107,9 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         else {print("未开启定位")
         }
         
-        let currentspeedlabel = UILabel(frame: CGRect(x: 30, y: 30, width: view.frame.width-40 , height: 80))
+        let currentspeedlabel = UILabel(frame: CGRect(x: 30, y: 30, width: view.frame.width-40 , height: 60))
         //currentspeedlabel.backgroundColor = UIColor.blue
-        currentspeedlabel.font = UIFont.boldSystemFont(ofSize: 13)
+        currentspeedlabel.font = UIFont.boldSystemFont(ofSize: 15)
         currentspeedlabel.tag = 101
         currentspeedlabel.numberOfLines = 4
         
@@ -117,13 +121,13 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         
         let rangetext = UILabel()
         rangetext.text = "范围距离为：(公里)"
-        rangetext.font = UIFont.boldSystemFont(ofSize: 13)
-        rangetext.frame = CGRect(x: 30, y: 110, width: 120, height: 40)
+        rangetext.font = UIFont.boldSystemFont(ofSize: 15)
+        rangetext.frame = CGRect(x: 30, y: 90, width: 200, height: 25)
         //rangetext.backgroundColor = UIColor.green
         self.view.addSubview(rangetext)
         
         let rangeget = UITextField()
-        rangeget.frame = CGRect(x: 150, y:120, width: 100, height: 25)
+        rangeget.frame = CGRect(x: 180, y:90, width: 70, height: 25)
         rangeget.tag = 103
         rangeget.borderStyle = UITextBorderStyle.bezel
         //rangeget.backgroundColor = UIColor.lightGray
@@ -138,8 +142,8 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         rangeget.didChangeValue(forKey: rangeget.text!)
         
         let button = UIButton()
-        button.frame = CGRect(x: 210, y: 120, width: view.frame.width-250, height: 25)
-        button.backgroundColor = UIColor.darkGray
+        button.frame = CGRect(x: 250, y: 90, width: view.frame.width-280, height: 25)
+        button.backgroundColor = UIColor.black
         button.setTitle("确定", for:.normal)
         button.addTarget(self, action: #selector(self.getrange), for: .touchUpInside)
         self.view.addSubview(button)
@@ -149,8 +153,11 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         
         let distancetext = UILabel()
         distancetext.text = "附近的站点有："
-        distancetext.frame = CGRect(x: 30, y:140, width: 200, height: 30)
-        distancetext.font = UIFont.boldSystemFont(ofSize: 13)
+        distancetext.frame = CGRect(x: 30, y:120, width: view.frame.width-60, height: 30)
+        distancetext.backgroundColor = UIColor.darkGray
+        distancetext.textAlignment = NSTextAlignment.center
+        distancetext.textColor = UIColor.white
+        distancetext.font = UIFont.boldSystemFont(ofSize: 18)
         self.view.addSubview(distancetext)
         
         
@@ -158,7 +165,9 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         let siteshow = UITextView()
         siteshow.backgroundColor = UIColor.gray
         siteshow.tag = 102
-        siteshow.frame = CGRect(x: 30 , y: 170, width: view.frame.width-60, height: view.frame.height-180)
+        siteshow.font = UIFont.boldSystemFont(ofSize: 14)
+        siteshow.frame = CGRect(x: 30 , y: 150, width: view.frame.width-60, height: view.frame.height-180)
+        siteshow.isEditable = false
         self.view.addSubview(siteshow)
         
         
@@ -169,7 +178,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
 
         let mode = UISwitch()
         mode.addTarget(self, action: #selector(modeswitch), for: UIControlEvents.valueChanged)
-        mode.frame = CGRect(x: view.frame.width-60, y: 30, width: 30, height: 10)
+        mode.frame = CGRect(x: view.frame.width-80, y: 35, width: 30, height: 10)
         self.view.addSubview(mode)
         
 
@@ -188,10 +197,15 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         let siteshow = self.view.viewWithTag(102) as? UITextView
         let speed = round(self.speed*100)/100
         let angle = round(self.angle*100)/100
-        let longitude = round(self.longitude*10000)/10000
-        let latitude = round(self.latitude*10000)/10000
+        let longitude = round(self.longitude*1000000)/1000000
+        let latitude = round(self.latitude*1000000)/1000000
+        if angle == -1 {
+        currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向:  无数据   （0度为正北）\n当前位置：\(longitude)  \(latitude)"
+        }
+        else{
         currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向为   \(angle)   度（0度为正北）\n当前位置：\(longitude)  \(latitude)"
-        print(selectedsite)
+        }
+
 
         
         //定义一个最终输入的字符串
