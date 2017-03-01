@@ -71,12 +71,12 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         for (site,gps) in sitegps{
             let tolocation = CLLocation(latitude: gps[1], longitude: gps[0])
             var distance:Double = 0
-            if bool {
+            
             distance = calcdistance(fromLongitude: self.longitude, fromLatitude: self.latitude, toLongitude: tolocation.coordinate.longitude, toLatitude: tolocation.coordinate.latitude)
-            }
-            else
-            {distance = currlocation.distance(from: tolocation)/1000
-            }
+            
+            
+            //distance = currlocation.distance(from: tolocation)/1000
+            
             //print(distance)
             let angle = calcangle(fromLongitude: self.longitude, fromLatitude: self.latitude, toLongitude: tolocation.coordinate.longitude, toLatitude: tolocation.coordinate.latitude)
             if (distance <= range!){
@@ -200,7 +200,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         let longitude = round(self.longitude*1000000)/1000000
         let latitude = round(self.latitude*1000000)/1000000
         if angle == -1 {
-        currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向:  无数据   （0度为正北）\n当前位置：\(longitude)  \(latitude)"
+        currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向:          （0度为正北）\n当前位置：\(longitude)  \(latitude)"
         }
         else{
         currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向为   \(angle)   度（0度为正北）\n当前位置：\(longitude)  \(latitude)"
@@ -212,6 +212,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         var selectedsitearray = ""
         var m:Double = 0
         var n:String = ""
+        
         if selectedsite.count > 1{
         for i in 1...selectedsite.count-1
         {for j in 0...selectedsite.count-1-i
@@ -231,9 +232,16 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
           }
         }
         }
-       // print(selectedsite)
         
-        if selectedsite.count >= 1{
+        if selectedsite.count == 1{
+            let anglesort = String(Float(lround(selectedangle[0]*100))/100)
+            let sitesort = String(selectedsite[0])
+            let distancesort = String(Float(lround(selecteddistance[0]*100))/100)
+            selectedsitearray = sitesort! + ":" + distancesort + "公里  " + "  方位角:" + anglesort + "\n"
+        }
+
+        
+        if selectedsite.count > 1{
             let anglesort = String(Float(lround(selectedangle[0]*100))/100)
             let sitesort = String(selectedsite[0])
             let distancesort = String(Float(lround(selecteddistance[0]*100))/100)
