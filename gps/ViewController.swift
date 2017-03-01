@@ -12,27 +12,27 @@ import Foundation
 
 class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDelegate{
     var locationManager : CLLocationManager!
-    var longitude:Double = 0.0
+    var longitude:Double = 0.0       //存放从gps取出的经纬度、高度、方向、速度
     var latitude:Double = 0.0
     var speed:Double = 0.0
     var altidue:Double = 0.0
     var angle:Double = 0
-    var range:Double? = 30
-    var time = Timer()
-    var selectedsite = [String]()
+    var range:Double? = 30         //存放从输入框取到的用户设定的距离范围，默认为30
+    var time = Timer()            //计时器对象
+    var selectedsite = [String]()        //满足范围条件的站点列表、距离、方位角
     var selecteddistance = [Double]()
     var selectedangle = [Double]()
-    var bool:Bool = true
-    var sitegps = [String:[Double]]()
-    func getsitegps(){
+    var bool:Bool = true                 //switch开关的状态
+    var sitegps = [String:[Double]]()      //预置站点的经纬度
+    func getsitegps(){                     //从site dict.swift中取预置站点的经纬度，存放在字典中
     if bool {sitegps = sitegps1}
-    else{sitegps = sitegps2}}
+    else{sitegps = sitegps2}}             //两个来源的经纬度信息，通过switch开关决定用哪一个
     var currlocation = CLLocation()
-    func modeswitch(){
+    func modeswitch(){                 //切换switch开关，更改bool的值
         bool = !bool
     }
     
-    func getrange() {
+    func getrange() {                 //从输入框取距离范围的方法
         let rangegettext = self.view.viewWithTag(103) as? UITextField
         let siteshow = self.view.viewWithTag(102) as? UITextView
         let t = rangegettext?.text
@@ -47,7 +47,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         siteshow?.text = ""
         
     }
-    
+                     //从gps取位置信息的方法
     func locationManager(_ manager: CLLocationManager,didUpdateLocations locations: [CLLocation]){
         print("定位真的开始了")
         currlocation = locations.last!
@@ -61,26 +61,25 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         self.angle = Float64(currlocation.course)
 
     }
-    func cwl ()  {
-        selectedsite.removeAll()
+    func getsiteinrange ()  {       //将预置的经纬度和取出的参数进行对比，将符合条件的地点存在数组中
+        selectedsite.removeAll()        //此方法每秒执行一次，执行前需要先清空上一次结果
         selectedangle.removeAll()
         selecteddistance.removeAll()
          var i = 0
-        //将预置的经纬度和取出的参数进行对比，将符合条件的地点存在数组中
         getsitegps()
         for (site,gps) in sitegps{
             let tolocation = CLLocation(latitude: gps[1], longitude: gps[0])
             var distance:Double = 0
             
+            //调用compute.swift中的方法计算距离
             distance = calcdistance(fromLongitude: self.longitude, fromLatitude: self.latitude, toLongitude: tolocation.coordinate.longitude, toLatitude: tolocation.coordinate.latitude)
             
-            
+            //调用gps自带的方法计算距离
             //distance = currlocation.distance(from: tolocation)/1000
             
-            //print(distance)
+            //调用compute.swift中的方法计算角度
             let angle = calcangle(fromLongitude: self.longitude, fromLatitude: self.latitude, toLongitude: tolocation.coordinate.longitude, toLatitude: tolocation.coordinate.latitude)
-            if (distance <= range!){
-
+            if (distance <= range!){     //满足条件的站点，存入数组
                 self.selectedsite.append(site)
                 self.selectedangle.append(angle)
                 self.selecteddistance.append(distance)
@@ -94,9 +93,9 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         self.locationManager = CLLocationManager()
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters   //设置精度
         self.locationManager.distanceFilter = 10
-        if #available(iOS 8.0, *){
+        if #available(iOS 8.0, *){                       //获得授权
         self.locationManager.requestWhenInUseAuthorization()
         }
         self.locationManager.delegate = self
@@ -182,7 +181,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         self.view.addSubview(mode)
         
 
-        // Do any additional setup after loading the view, typically from a nib.
+        // 定时器对象，每秒执行一次，调用timerfiremethod函数
 
         let timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(ViewController.timerfiremethod), userInfo: nil, repeats: true)
             timer.fire()
@@ -191,9 +190,9 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
     }
     
     func timerfiremethod(){
-       cwl()
+       getsiteinrange()      //获取满足范围的站点列表
         
-        let currentspeedlabel = self.view.viewWithTag(101) as? UILabel
+        let currentspeedlabel = self.view.viewWithTag(101) as? UILabel       //找到之前定义好的输出框
         let siteshow = self.view.viewWithTag(102) as? UITextView
         let speed = round(self.speed*100)/100
         let angle = round(self.angle*100)/100
@@ -239,8 +238,6 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
             let distancesort = String(Float(lround(selecteddistance[0]*100))/100)
             selectedsitearray = sitesort! + ":" + distancesort + "公里  " + "  方位角:" + anglesort + "\n"
         }
-
-        
         if selectedsite.count > 1{
             let anglesort = String(Float(lround(selectedangle[0]*100))/100)
             let sitesort = String(selectedsite[0])
