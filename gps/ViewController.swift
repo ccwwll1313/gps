@@ -106,13 +106,13 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         else {print("未开启定位")
         }
         
-        let currentspeedlabel = UILabel(frame: CGRect(x: 30, y: 30, width: view.frame.width-40 , height: 60))
+        let currentspeedlabel = UILabel(frame: CGRect(x: 30, y: 25, width: view.frame.width-40 , height: 75))
         //currentspeedlabel.backgroundColor = UIColor.blue
         currentspeedlabel.font = UIFont.boldSystemFont(ofSize: 15)
         currentspeedlabel.tag = 101
         currentspeedlabel.numberOfLines = 4
         
-        currentspeedlabel.text = "当前速度为  \(speed)km/h\n方向为  \(self.angle)度（0度为正北）\n当前位置：\(self.longitude)\n       \(self.latitude)"
+        currentspeedlabel.text = "当前速度为  \(speed)km/h\n方向：  \(self.angle)度  海拔：   \(self.altidue)\n当前位置：\(self.longitude)\n       \(self.latitude)"
         currentspeedlabel.textColor = UIColor.black
         currentspeedlabel.textAlignment = NSTextAlignment.left
         
@@ -142,7 +142,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         
         let button = UIButton()
         button.frame = CGRect(x: 250, y: 90, width: view.frame.width-280, height: 25)
-        button.backgroundColor = UIColor.black
+        button.backgroundColor = UIColor.init(red: 0.18, green: 0.3, blue: 0.3, alpha: 1)
         button.setTitle("确定", for:.normal)
         button.addTarget(self, action: #selector(self.getrange), for: .touchUpInside)
         self.view.addSubview(button)
@@ -151,10 +151,10 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
 
         
         let distancetext = UILabel()
-        distancetext.text = "附近的站点有："
+        distancetext.text = "   附近的站点有："
         distancetext.frame = CGRect(x: 30, y:120, width: view.frame.width-60, height: 30)
-        distancetext.backgroundColor = UIColor.darkGray
-        distancetext.textAlignment = NSTextAlignment.center
+        distancetext.backgroundColor = UIColor.init(red: 0.4, green: 0.54, blue: 0.54, alpha: 1)
+        distancetext.textAlignment = NSTextAlignment.left
         distancetext.textColor = UIColor.white
         distancetext.font = UIFont.boldSystemFont(ofSize: 18)
         self.view.addSubview(distancetext)
@@ -177,7 +177,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
 
         let mode = UISwitch()
         mode.addTarget(self, action: #selector(modeswitch), for: UIControlEvents.valueChanged)
-        mode.frame = CGRect(x: view.frame.width-80, y: 35, width: 30, height: 10)
+        mode.frame = CGRect(x: view.frame.width-80, y: 120, width: 30, height: 30)
         self.view.addSubview(mode)
         
 
@@ -198,11 +198,12 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         let angle = round(self.angle*100)/100
         let longitude = round(self.longitude*1000000)/1000000
         let latitude = round(self.latitude*1000000)/1000000
+        let altidue = round(self.altidue*100)/100
         if angle == -1 {
-        currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向:          （0度为正北）\n当前位置：\(longitude)  \(latitude)"
+        currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向：                  海拔：   \(altidue)米\n当前位置：\(longitude)  \(latitude)"
         }
         else{
-        currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向为   \(angle)   度（0度为正北）\n当前位置：\(longitude)  \(latitude)"
+        currentspeedlabel?.text = "当前速度为  \(speed)   km/h\n方向：  \(angle)   度    海拔：   \(altidue)米\n当前位置：\(longitude)  \(latitude)"
         }
 
 
