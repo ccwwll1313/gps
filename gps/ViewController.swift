@@ -45,8 +45,32 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         print(self.range as Any)
         rangegettext?.resignFirstResponder()
         siteshow?.text = ""
+    }
+    
+    func addsite(){
+        let newsite = self.view.viewWithTag(111) as? UITextField
+        let newlong = self.view.viewWithTag(112) as? UITextField
+        let newlat = self.view.viewWithTag(113) as? UITextField
+
+        
+        
+        
         
     }
+    
+    func deletesite(){
+        let deletesite = self.view.viewWithTag(114) as? UITextField
+    }
+    
+    func showsites(){
+        let scroll = self.view.viewWithTag(104) as? UIScrollView
+        let showsitelist = self.view.viewWithTag(121) as? UITextView
+        
+        //scroll?.addSubview(showsitelist!)
+        
+    
+    }
+    
                      //从gps取位置信息的方法
     func locationManager(_ manager: CLLocationManager,didUpdateLocations locations: [CLLocation]){
         print("定位真的开始了")
@@ -106,6 +130,19 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         else {print("未开启定位")
         }
         
+        let scroll = UIScrollView()
+        scroll.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        scroll.isScrollEnabled = true
+        scroll.isPagingEnabled = true
+        scroll.contentSize = CGSize.init(width: view.frame.width*3, height: view.frame.height)
+        scroll.bounces = true
+        scroll.alwaysBounceHorizontal = true
+        scroll.showsHorizontalScrollIndicator = true
+        scroll.tag = 104
+        self.view.addSubview(scroll)
+        
+        
+        
         let currentspeedlabel = UILabel(frame: CGRect(x: 30, y: 25, width: view.frame.width-40 , height: 75))
         //currentspeedlabel.backgroundColor = UIColor.blue
         currentspeedlabel.font = UIFont.boldSystemFont(ofSize: 15)
@@ -116,14 +153,14 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         currentspeedlabel.textColor = UIColor.black
         currentspeedlabel.textAlignment = NSTextAlignment.left
         
-        self.view.addSubview(currentspeedlabel)
+        scroll.addSubview(currentspeedlabel)
         
         let rangetext = UILabel()
         rangetext.text = "范围距离为：(公里)"
         rangetext.font = UIFont.boldSystemFont(ofSize: 15)
         rangetext.frame = CGRect(x: 30, y: 90, width: 200, height: 25)
         //rangetext.backgroundColor = UIColor.green
-        self.view.addSubview(rangetext)
+        scroll.addSubview(rangetext)
         
         let rangeget = UITextField()
         rangeget.frame = CGRect(x: 180, y:90, width: 70, height: 25)
@@ -137,15 +174,15 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         rangeget.clearButtonMode = UITextFieldViewMode.whileEditing
         rangeget.returnKeyType = UIReturnKeyType.done
         rangeget.delegate = self
-        self.view.addSubview(rangeget)
-        rangeget.didChangeValue(forKey: rangeget.text!)
+        scroll.addSubview(rangeget)
+        //rangeget.didChangeValue(forKey: rangeget.text!)
         
         let button = UIButton()
         button.frame = CGRect(x: 250, y: 90, width: view.frame.width-280, height: 25)
         button.backgroundColor = UIColor.init(red: 0.18, green: 0.3, blue: 0.3, alpha: 1)
         button.setTitle("确定", for:.normal)
         button.addTarget(self, action: #selector(self.getrange), for: .touchUpInside)
-        self.view.addSubview(button)
+        scroll.addSubview(button)
         
  
 
@@ -157,7 +194,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         distancetext.textAlignment = NSTextAlignment.left
         distancetext.textColor = UIColor.white
         distancetext.font = UIFont.boldSystemFont(ofSize: 18)
-        self.view.addSubview(distancetext)
+        scroll.addSubview(distancetext)
         
         
         
@@ -167,18 +204,126 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         siteshow.font = UIFont.boldSystemFont(ofSize: 14)
         siteshow.frame = CGRect(x: 30 , y: 150, width: view.frame.width-60, height: view.frame.height-180)
         siteshow.isEditable = false
-        self.view.addSubview(siteshow)
+        scroll.addSubview(siteshow)
         
         
+        let addsite = UILabel()
+        addsite.text = "添加站点"
+        addsite.frame = CGRect(x: view.frame.width, y: 20, width: view.frame.width, height: 30)
+        addsite.font = UIFont.boldSystemFont(ofSize: 20)
+        addsite.textAlignment = NSTextAlignment.center
+        addsite.backgroundColor = UIColor.darkGray
+        scroll.addSubview(addsite)
+        
+        let deletesite = UILabel()
+        deletesite.text = "删除站点"
+        deletesite.frame = CGRect(x: view.frame.width, y: 240, width: view.frame.width, height: 30)
+        deletesite.font = UIFont.boldSystemFont(ofSize: 20)
+        deletesite.textAlignment = NSTextAlignment.center
+        deletesite.backgroundColor = UIColor.darkGray
+        scroll.addSubview(deletesite)
         
         
-        let addsite = UIButton()
-        addsite.setTitle("添加站点经纬度", for: UIControlState.normal)
-
+        let sitename = UILabel()
+        let long = UILabel()
+        let lat = UILabel()
+        let newsite = UITextField()
+        let sitedeletelabel = UILabel()
+        let sitedelete = UITextField()
+        let newlongitude = UITextField()
+        let newlatitude = UITextField()
+        let newsiteconfirm = UIButton()
+        let deletesiteconfirm = UIButton()
+        sitename.frame = CGRect(x: view.frame.width+30, y: 60, width: 100, height: 30)
+        sitename.text = "站点名称："
+        sitename.font = UIFont.boldSystemFont(ofSize: 18)
+        scroll.addSubview(sitename)
+        
+        sitedeletelabel.frame = CGRect(x: view.frame.width+30, y: 280, width: 100, height: 30)
+        sitedeletelabel.text = "站点名称："
+        sitedeletelabel.font = UIFont.boldSystemFont(ofSize: 18)
+        scroll.addSubview(sitedeletelabel)
+        
+        long.frame = CGRect(x: view.frame.width+30, y: 95, width: 70, height: 30)
+        long.text = "经度："
+        long.font = UIFont.boldSystemFont(ofSize: 18)
+        //long.backgroundColor = UIColor.gray
+        
+        scroll.addSubview(long)
+        lat.frame = CGRect(x: view.frame.width+30, y: 130, width: 70, height: 30)
+        lat.text = "纬度："
+        lat.font = UIFont.boldSystemFont(ofSize: 18)
+        //lat.backgroundColor = UIColor.gray
+        scroll.addSubview(lat)
+        
+        newsite.frame = CGRect(x: view.frame.width+130, y: 60, width: view.frame.width-160, height: 30)
+        newsite.tag = 111
+        newsite.borderStyle = UITextBorderStyle.bezel
+        newsite.clearsOnBeginEditing = true
+        newsite.clearButtonMode = UITextFieldViewMode.whileEditing
+        newsite.returnKeyType = UIReturnKeyType.done
+        newsite.delegate = self
+        scroll.addSubview(newsite)
+        
+        newlongitude.frame = CGRect(x: view.frame.width+100, y: 95, width: view.frame.width-130, height: 30)
+        newlongitude.tag = 112
+        newlongitude.borderStyle = UITextBorderStyle.bezel
+        newlongitude.clearsOnBeginEditing = true
+        newlongitude.clearButtonMode = UITextFieldViewMode.whileEditing
+        newlongitude.returnKeyType = UIReturnKeyType.done
+        newlongitude.delegate = self
+        scroll.addSubview(newlongitude)
+        
+        newlatitude.frame = CGRect(x: view.frame.width+100, y: 130, width: view.frame.width-130, height: 30)
+        newlatitude.tag = 113
+        newlatitude.borderStyle = UITextBorderStyle.bezel
+        newlatitude.clearsOnBeginEditing = true
+        newlatitude.clearButtonMode = UITextFieldViewMode.whileEditing
+        newlatitude.returnKeyType = UIReturnKeyType.done
+        newlatitude.delegate = self
+        scroll.addSubview(newlatitude)
+        
+        sitedelete.frame = CGRect(x: view.frame.width+130, y: 280, width: view.frame.width-160, height: 30)
+        sitedelete.tag = 114
+        sitedelete.borderStyle = UITextBorderStyle.bezel
+        sitedelete.clearsOnBeginEditing = true
+        sitedelete.clearButtonMode = UITextFieldViewMode.whileEditing
+        sitedelete.returnKeyType = UIReturnKeyType.done
+        sitedelete.delegate = self
+        scroll.addSubview(sitedelete)
+        
+        newsiteconfirm.frame = CGRect(x: view.frame.width*1.5 - 30, y: 180, width: 60, height: 30)
+        newsiteconfirm.backgroundColor = UIColor.init(red: 0.18, green: 0.3, blue: 0.3, alpha: 1)
+        newsiteconfirm.setTitle("添加", for:.normal)
+        newsiteconfirm.addTarget(self, action: #selector(self.addsite), for: .touchUpInside)
+        scroll.addSubview(newsiteconfirm)
+        
+        deletesiteconfirm.frame = CGRect(x: view.frame.width*1.5 - 30, y: 330, width: 60, height: 30)
+        deletesiteconfirm.backgroundColor = UIColor.init(red: 0.18, green: 0.3, blue: 0.3, alpha: 1)
+        deletesiteconfirm.setTitle("删除", for:.normal)
+        deletesiteconfirm.addTarget(self, action: #selector(self.deletesite), for: .touchUpInside)
+        scroll.addSubview(deletesiteconfirm)
+        
+        let showsites = UIButton()
+        showsites.frame = CGRect(x: view.frame.width*2, y: 20, width: view.frame.width, height: 30)
+        showsites.backgroundColor = UIColor.init(red: 0.18, green: 0.3, blue: 0.3, alpha: 1)
+        showsites.setTitle("显示所有站点", for:.normal)
+        showsites.addTarget(self, action: #selector(self.showsites), for: .touchUpInside)
+        scroll.addSubview(showsites)
+        
+       let showsitelist = UITextView()
+        showsitelist.backgroundColor = UIColor.gray
+        showsitelist.frame = CGRect(x: view.frame.width*2 + 20, y: 60, width: view.frame.width-40, height: view.frame.height-80)
+        showsitelist.tag = 121
+        showsitelist.font = UIFont.boldSystemFont(ofSize: 14)
+        showsitelist.isEditable = false
+         showsitelist.isEditable = false
+        scroll.addSubview(showsitelist)
+        
         let mode = UISwitch()
         mode.addTarget(self, action: #selector(modeswitch), for: UIControlEvents.valueChanged)
         mode.frame = CGRect(x: view.frame.width-80, y: 120, width: 30, height: 30)
-        self.view.addSubview(mode)
+        scroll.addSubview(mode)
         
 
         // 定时器对象，每秒执行一次，调用timerfiremethod函数
@@ -194,6 +339,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         
         let currentspeedlabel = self.view.viewWithTag(101) as? UILabel       //找到之前定义好的输出框
         let siteshow = self.view.viewWithTag(102) as? UITextView
+        let scroll = self.view.viewWithTag(104) as? UIScrollView
         let speed = round(self.speed*100)/100
         let angle = round(self.angle*100)/100
         let longitude = round(self.longitude*1000000)/1000000
@@ -255,8 +401,8 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         }
 
         siteshow?.text = selectedsitearray
-        self.view.addSubview(siteshow!)
-        self.view.addSubview(currentspeedlabel!)
+        scroll?.addSubview(siteshow!)
+        scroll?.addSubview(currentspeedlabel!)
         
         //print(self.latitude)
         //print(self.angel)
