@@ -5,28 +5,29 @@
 //  Created by 任思燕 on 17/2/24.
 //  Copyright © 2017年 陈伟麟. All rights reserved.
 //
-
 import UIKit
 import CoreLocation
 import Foundation
 
 class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDelegate{
+    let db = SQLiteDB()
     var locationManager : CLLocationManager!
     var longitude:Double = 0.0       //存放从gps取出的经纬度、高度、方向、速度
     var latitude:Double = 0.0
     var speed:Double = 0.0
     var altidue:Double = 0.0
     var angle:Double = 0
-    var range:Double? = 30         //存放从输入框取到的用户设定的距离范围，默认为30
+    var range:Double = 30         //存放从输入框取到的用户设定的距离范围，默认为30
     var time = Timer()            //计时器对象
     var selectedsite = [String]()        //满足范围条件的站点列表、距离、方位角
     var selecteddistance = [Double]()
     var selectedangle = [Double]()
-    var bool:Bool = true                 //switch开关的状态
+    var bool:Bool = false          //switch开关的状态
     var sitegps = [String:[Double]]()      //预置站点的经纬度
     func getsitegps(){                     //从site dict.swift中取预置站点的经纬度，存放在字典中
-    if bool {sitegps = sitegps1}
-    else{sitegps = sitegps2}}             //两个来源的经纬度信息，通过switch开关决定用哪一个
+    sitegps = sitegps1
+               //两个来源的经纬度信息, 可以设为1或者2
+    }
     var currlocation = CLLocation()
     func modeswitch(){                 //切换switch开关，更改bool的值
         bool = !bool
@@ -36,44 +37,87 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         let rangegettext = self.view.viewWithTag(103) as? UITextField
         let siteshow = self.view.viewWithTag(102) as? UITextView
         let t = rangegettext?.text
-        if t == nil{
+        if t == ""{
             self.range = 30
         }
         else {
-            self.range = Double(t!)
+            self.range = Double(t!)!
         }
-        print(self.range as Any)
+        print(self.range)
         rangegettext?.resignFirstResponder()
         siteshow?.text = ""
     }
-    
-    func addsite(){
-        let newsite = self.view.viewWithTag(111) as? UITextField
-        let newlong = self.view.viewWithTag(112) as? UITextField
-        let newlat = self.view.viewWithTag(113) as? UITextField
 
-        
-        
-        
-        
+    func addsite(){
+        let newsite = self.view.viewWithTag(111) as! UITextField
+        let newlong = self.view.viewWithTag(112) as! UITextField
+        let newlat = self.view.viewWithTag(113) as! UITextField
+        let sitename = String(newsite.text!)
+        let sitelong = Double(newlong.text!)
+        let sitelat = Double(newlat.text!)
+        let siteintable = db.query(sql: "select sitename from site where sitename = \(sitename)")
+        print(siteintable)
+        let user = siteintable.first
+        if  user?["sitename"] as? String == sitename
+        {
+        //如果此站已经存在，提示添加失败，此站存在
+        print("添加失败")
+    
+        }
+        else{
+        //将新站点添加至数据库
+            //插入数据库，这里用到了esc字符编码函数，其实是调用bridge.m实现的
+            let sql = "insert into site(sitename,longitude,latitude) values('\(sitename!)','\(sitelong!)','\(sitelat!)')"
+            print("sql: \(sql)")
+            //通过封装的方法执行sql
+            let result = db.execute(sql: sql)
+            print(result)
+            print("添加成功")
+        }
+        newsite.resignFirstResponder()
+        newlong.resignFirstResponder()
+        newlat.resignFirstResponder()
     }
     
     func deletesite(){
-        let deletesite = self.view.viewWithTag(114) as? UITextField
-    }
-    
-    func showsites(){
-        let scroll = self.view.viewWithTag(104) as? UIScrollView
-        let showsitelist = self.view.viewWithTag(121) as? UITextView
+        let deletesite = self.view.viewWithTag(114) as! UITextField
+        let sql = "delete from site where sitename = '\(deletesite.text!)'"
+        print(sql)
+        let result1 = db.execute(sql: sql)
+        print(result1)
         
-        //scroll?.addSubview(showsitelist!)
+        deletesite.resignFirstResponder()
+    }
+
+    func showsites(){    //数据库中取出所有的站点经纬度，显示在第三页的showsitelist中
+        let scroll = self.view.viewWithTag(104) as! UIScrollView
+        let showsitelist = self.view.viewWithTag(121) as! UITextView
+        let sql = "select * from site"
+        let result = db.query(sql: sql)
+        var sitestring = ""
+        print(result)
+        for dict in result
+        {
+            sitestring += dict["sitename"] as! String
+            sitestring += "  经度："
+            sitestring += "\(dict["longitude"]!)"
+            sitestring += "  纬度："
+            sitestring += "\(dict["latitude"]!)"
+            sitestring += "\n"
+        }
+        showsitelist.text = sitestring
+        sitestring = ""
+        scroll.addSubview(showsitelist)
+        //从数据库取出所有的站名和经纬度
+
         
     
     }
-    
+
                      //从gps取位置信息的方法
     func locationManager(_ manager: CLLocationManager,didUpdateLocations locations: [CLLocation]){
-        print("定位真的开始了")
+        if bool == true{
+            print("定位真的开始了")
         currlocation = locations.last!
        
         //从手机gps取5个参数
@@ -83,7 +127,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         self.speed = Float64(currlocation.speed)*3.6
         if self.speed == -3.6{self.speed = 0}
         self.angle = Float64(currlocation.course)
-
+        }
     }
     func getsiteinrange ()  {       //将预置的经纬度和取出的参数进行对比，将符合条件的地点存在数组中
         selectedsite.removeAll()        //此方法每秒执行一次，执行前需要先清空上一次结果
@@ -103,7 +147,7 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
             
             //调用compute.swift中的方法计算角度
             let angle = calcangle(fromLongitude: self.longitude, fromLatitude: self.latitude, toLongitude: tolocation.coordinate.longitude, toLatitude: tolocation.coordinate.latitude)
-            if (distance <= range!){     //满足条件的站点，存入数组
+            if (distance <= range){     //满足条件的站点，存入数组
                 self.selectedsite.append(site)
                 self.selectedangle.append(angle)
                 self.selecteddistance.append(distance)
@@ -113,9 +157,18 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         }
 
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //获取数据库实例
+        let db = SQLiteDB.sharedInstance
+        //如果表还不存在则创建表（其中uid为自增主键）
+        let siteandgps = db.execute(sql: "create table if not exists site(sitename text primary key,longitude real,latitude real)")
+        print(siteandgps)
+
+        
+        
         self.locationManager = CLLocationManager()
         self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters   //设置精度
         self.locationManager.distanceFilter = 10
@@ -335,8 +388,8 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
     }
     
     func timerfiremethod(){
-       getsiteinrange()      //获取满足范围的站点列表
-        
+        if self.bool == true{
+        getsiteinrange()      //获取满足范围的站点列表
         let currentspeedlabel = self.view.viewWithTag(101) as? UILabel       //找到之前定义好的输出框
         let siteshow = self.view.viewWithTag(102) as? UITextView
         let scroll = self.view.viewWithTag(104) as? UIScrollView
@@ -407,10 +460,8 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
         //print(self.latitude)
         //print(self.angel)
         //print(self.speed)
-    
+        }
     }
-    
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -418,8 +469,4 @@ class ViewController: UIViewController,UITextFieldDelegate,CLLocationManagerDele
 
         // Dispose of any resources that can be recreated.
     }
-
-
-
 }
-

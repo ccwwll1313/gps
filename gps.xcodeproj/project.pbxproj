@@ -15,6 +15,11 @@
 		9A6971B21E605D3C00529110 /* gpsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6971B11E605D3C00529110 /* gpsTests.swift */; };
 		9A6971BD1E605D3C00529110 /* gpsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6971BC1E605D3C00529110 /* gpsUITests.swift */; };
 		9A6972051E60886B00529110 /* compute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A6972041E60886A00529110 /* compute.swift */; };
+		9ABB42D21E6A358E004F3FE2 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9ABB42D11E6A358E004F3FE2 /* libsqlite3.0.tbd */; };
+		9ABB42D81E6A392B004F3FE2 /* SQLiteDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABB42D51E6A392B004F3FE2 /* SQLiteDB.swift */; };
+		9ABB42D91E6A392B004F3FE2 /* SQLTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABB42D61E6A392B004F3FE2 /* SQLTable.swift */; };
+		9ABB42DA1E6A392B004F3FE2 /* String-Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ABB42D71E6A392B004F3FE2 /* String-Extras.swift */; };
+		9ABB42DC1E6A42F3004F3FE2 /* data.db in Resources */ = {isa = PBXBuildFile; fileRef = 9ABB42DB1E6A42F3004F3FE2 /* data.db */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +54,12 @@
 		9A6971BC1E605D3C00529110 /* gpsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = gpsUITests.swift; sourceTree = "<group>"; };
 		9A6971BE1E605D3C00529110 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A6972041E60886A00529110 /* compute.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = compute.swift; sourceTree = "<group>"; };
+		9ABB42D11E6A358E004F3FE2 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		9ABB42D31E6A36DB004F3FE2 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Bridging-Header.h"; path = "../../../Downloads/SQLiteDB-master/Examples/iOS/Source/Bridging-Header.h"; sourceTree = "<group>"; };
+		9ABB42D51E6A392B004F3FE2 /* SQLiteDB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SQLiteDB.swift; path = ../../../../Downloads/hangge_645/SQLiteDB/SQLiteDB.swift; sourceTree = "<group>"; };
+		9ABB42D61E6A392B004F3FE2 /* SQLTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SQLTable.swift; path = ../../../../Downloads/hangge_645/SQLiteDB/SQLTable.swift; sourceTree = "<group>"; };
+		9ABB42D71E6A392B004F3FE2 /* String-Extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String-Extras.swift"; path = "../../../../Downloads/hangge_645/SQLiteDB/String-Extras.swift"; sourceTree = "<group>"; };
+		9ABB42DB1E6A42F3004F3FE2 /* data.db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = data.db; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9ABB42D21E6A358E004F3FE2 /* libsqlite3.0.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,10 +91,14 @@
 		9A6971901E605D3C00529110 = {
 			isa = PBXGroup;
 			children = (
+				9ABB42DB1E6A42F3004F3FE2 /* data.db */,
+				9ABB42D31E6A36DB004F3FE2 /* Bridging-Header.h */,
+				9ABB42D41E6A38FC004F3FE2 /* sqlite */,
 				9A69719B1E605D3C00529110 /* gps */,
 				9A6971B01E605D3C00529110 /* gpsTests */,
 				9A6971BB1E605D3C00529110 /* gpsUITests */,
 				9A69719A1E605D3C00529110 /* Products */,
+				9ABB42D01E6A358E004F3FE2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -126,6 +142,25 @@
 				9A6971BE1E605D3C00529110 /* Info.plist */,
 			);
 			path = gpsUITests;
+			sourceTree = "<group>";
+		};
+		9ABB42D01E6A358E004F3FE2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9ABB42D11E6A358E004F3FE2 /* libsqlite3.0.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9ABB42D41E6A38FC004F3FE2 /* sqlite */ = {
+			isa = PBXGroup;
+			children = (
+				9ABB42D51E6A392B004F3FE2 /* SQLiteDB.swift */,
+				9ABB42D61E6A392B004F3FE2 /* SQLTable.swift */,
+				9ABB42D71E6A392B004F3FE2 /* String-Extras.swift */,
+			);
+			name = sqlite;
+			path = gps;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -240,6 +275,7 @@
 			files = (
 				9A6971A71E605D3C00529110 /* LaunchScreen.storyboard in Resources */,
 				9A6971A41E605D3C00529110 /* Assets.xcassets in Resources */,
+				9ABB42DC1E6A42F3004F3FE2 /* data.db in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,8 +302,11 @@
 			files = (
 				9A6972051E60886B00529110 /* compute.swift in Sources */,
 				9A69719F1E605D3C00529110 /* ViewController.swift in Sources */,
+				9ABB42D81E6A392B004F3FE2 /* SQLiteDB.swift in Sources */,
 				9A69719D1E605D3C00529110 /* AppDelegate.swift in Sources */,
+				9ABB42DA1E6A392B004F3FE2 /* String-Extras.swift in Sources */,
 				9A68C5F91E652FB700591CAC /* site dict.swift in Sources */,
+				9ABB42D91E6A392B004F3FE2 /* SQLTable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +456,9 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ccwwll1313.gps;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INCLUDE_PATHS = "";
+				"SWIFT_INCLUDE_PATHS[arch=*]" = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -432,6 +474,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ccwwll1313.gps;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_INCLUDE_PATHS = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
